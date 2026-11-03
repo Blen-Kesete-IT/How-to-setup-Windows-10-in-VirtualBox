@@ -1,69 +1,54 @@
 # Network Validation
 
-This document records the connectivity checks used to validate the Windows 10 and Kali Linux lab network.
+This document records the connectivity checks used to validate the Windows 10 and Kali Linux lab network without publishing network identifiers.
 
-## Expected Addressing
+> Exact IP addresses, gateway values, DNS addresses, and network ranges are intentionally redacted.
+
+## Addressing
 
 | System | IPv4 Address | Purpose |
 |---|---|---|
-| VirtualBox NAT gateway | `10.0.0.1` | Default gateway |
-| Kali Linux | `10.0.0.2` | Security testing VM |
-| Windows 10 | `10.0.0.10` | Windows lab target |
-
-Subnet mask: `255.255.255.0` (`/24`)
+| VirtualBox NAT gateway | `[REDACTED]` | Default gateway |
+| Kali Linux | `[REDACTED]` | Security testing VM |
+| Windows 10 | `[REDACTED]` | Windows lab VM |
 
 ## Test 1 — Windows to Kali
 
-From Windows Command Prompt:
+From Windows Command Prompt, an ICMP echo test was sent to the Kali VM using its private lab address.
 
 ```cmd
-ping 10.0.0.2
+ping [KALI-IP-REDACTED]
 ```
 
-Expected result:
+The validation evidence showed successful replies and **0% packet loss**, confirming communication between the two VMs.
 
-```text
-Reply from 10.0.0.2 ...
-Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
-```
+## Test 2 — Outbound Connectivity
 
-A successful result confirms that Windows can communicate with the Kali VM over the shared VirtualBox NAT Network.
-
-## Test 2 — Windows to Internet
-
-From Windows Command Prompt:
+An ICMP test to an external destination was used to verify outbound connectivity through the VirtualBox NAT Network.
 
 ```cmd
-ping 8.8.8.8
+ping [EXTERNAL-DESTINATION-REDACTED]
 ```
 
-Expected result:
-
-```text
-Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
-```
-
-This validates outbound IP connectivity through the VirtualBox NAT gateway.
+The validation evidence showed **0% packet loss**.
 
 ## Test 3 — Kali to Windows
 
-From Kali Linux:
+From Kali Linux, a reverse connectivity test can verify bidirectional communication:
 
 ```bash
-ping 10.0.0.10
+ping [WINDOWS-IP-REDACTED]
 ```
-
-A successful response verifies bidirectional communication between the two lab systems.
 
 ## Troubleshooting
 
-If Windows can ping Kali but Kali cannot ping Windows, check Windows Defender Firewall. Inbound ICMP echo requests may be blocked even when general network connectivity is working.
+If Windows can reach Kali but Kali cannot reach Windows, check Windows Defender Firewall. Inbound ICMP echo requests may be blocked even when general network connectivity is working.
 
 Prefer enabling the appropriate inbound rule instead of disabling the firewall entirely:
 
 **Windows Defender Firewall with Advanced Security > Inbound Rules > File and Printer Sharing (Echo Request - ICMPv4-In)**
 
-Also verify:
+Useful local troubleshooting commands include:
 
 ```cmd
 ipconfig
@@ -77,15 +62,8 @@ ip addr
 ip route
 ```
 
-Both systems should be on the same `10.0.0.0/24` subnet and should use the intended VirtualBox NAT Network.
+Do not publish the resulting IP addresses, routes, or other identifiers unless permitted by the instructor.
 
 ## Validation Result
 
-The provided Windows evidence shows:
-
-- Successful ping from Windows to Kali at `10.0.0.2`
-- 4 packets sent, 4 received, 0 lost
-- Successful ping from Windows to `8.8.8.8`
-- 4 packets sent, 4 received, 0 lost
-
-These results demonstrate working local lab connectivity and outbound Internet connectivity from the Windows VM.
+The lab evidence demonstrates successful VM-to-VM connectivity and outbound network connectivity. Specific addresses are intentionally omitted from this public repository.
