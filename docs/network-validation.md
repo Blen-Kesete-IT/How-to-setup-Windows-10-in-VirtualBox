@@ -48,35 +48,47 @@ The initial Kali-to-Windows test failed:
 4 packets transmitted, 0 received, 100% packet loss
 ```
 
-Because Windows could already communicate with Kali, this indicated that the virtual network was functioning but inbound ICMP traffic to Windows required additional investigation.
+Because Windows could already communicate with Kali, this suggested that the virtual network was functioning but inbound ICMP traffic to Windows required additional investigation.
 
 ## Troubleshooting Kali-to-Windows Connectivity
 
 ### Problem
 
-Kali Linux could not receive ICMP Echo Replies from the Windows 10 VM. The test resulted in **100% packet loss**.
+Kali Linux initially could not receive ICMP Echo Replies from the Windows 10 VM. The test resulted in **100% packet loss**.
 
 ### Investigation
 
-The Windows Defender Firewall configuration was reviewed. The Windows VM was connected using the **Public** network profile, and inbound ICMP Echo Requests can be blocked by the firewall even when other network connectivity works normally.
+I reviewed the Windows Defender Firewall configuration and checked the inbound firewall rules. The ICMP Echo Request rule required for the test was not enabled for the profile I needed.
 
-### Resolution
+### Extra Steps Taken
 
-On the Windows 10 VM:
+On the Windows 10 VM, I completed the following steps:
 
-1. Open **Windows Defender Firewall**.
-2. Select **Advanced settings**.
-3. Select **Inbound Rules**.
-4. Locate **File and Printer Sharing (Echo Request - ICMPv4-In)**.
-5. Enable the rule that applies to the active **Public** network profile.
-6. Keep Windows Defender Firewall enabled; only the required ICMP rule should be changed.
-7. Return to Kali Linux and repeat the connectivity test.
+1. Opened **Windows Defender Firewall**.
+2. Selected **Advanced settings**.
+3. Selected **Inbound Rules**.
+4. Located **File and Printer Sharing (Echo Request - ICMPv4-In)**.
+5. Enabled the appropriate rule for the **Private** profile.
+6. Kept Windows Defender Firewall enabled instead of disabling the firewall completely.
+7. Returned to Kali Linux and repeated the connectivity test.
 
 ```bash
 ping -c 4 [WINDOWS-IP-REDACTED]
 ```
 
-A successful test should report received packets and **0% packet loss**.
+### Successful Result
+
+After enabling the appropriate inbound ICMPv4 rule, the Kali-to-Windows test succeeded:
+
+```text
+4 packets transmitted, 4 received, 0% packet loss
+```
+
+This confirmed that the VirtualBox network was working and that the original Kali-to-Windows connectivity problem was related to the Windows Defender Firewall inbound ICMP rule.
+
+### What I Learned
+
+This troubleshooting exercise showed that successful communication in one direction does not necessarily mean traffic will be permitted in the opposite direction. Host-based firewall rules can affect connectivity even when both virtual machines are on the same virtual network. It also demonstrated why it is better to enable only the required firewall rule instead of disabling the firewall entirely.
 
 ### Additional Diagnostic Commands
 
@@ -102,4 +114,4 @@ IP addresses and other network identifiers are intentionally masked in this publ
 
 ## Validation Result
 
-The lab demonstrates the process of testing Windows-to-Kali connectivity, outbound connectivity, and troubleshooting Kali-to-Windows ICMP communication. This troubleshooting exercise also demonstrates why host-based firewall rules must be considered when diagnosing apparent network connectivity failures.
+The lab demonstrates successful Windows-to-Kali connectivity, outbound connectivity, and successful Kali-to-Windows communication after troubleshooting the Windows Defender Firewall configuration. The final reverse connectivity test completed with **0% packet loss**.
