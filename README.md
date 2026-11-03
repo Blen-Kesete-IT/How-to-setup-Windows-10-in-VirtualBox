@@ -18,19 +18,18 @@ The goal is to build a controlled virtual environment, place both machines on th
 
 ## Network Topology
 
-```text
-                     Internet
-                        |
-                 VirtualBox NAT
-                        |
-                Private Gateway
-                        |
-                 Lab NAT Network
-                 /             \
-                /               \
-        Kali Linux VM       Windows 10 VM
-        [IP REDACTED]       [IP REDACTED]
-```
+                         Internet
+                            |
+                     VirtualBox NAT
+                            |
+                    Private Gateway
+                            |
+                     Lab NAT Network
+                  /         |         \
+                 /          |          \
+        Kali Linux VM  Windows 10 VM  Android Device
+        [IP REDACTED]  [IP REDACTED]   [IP REDACTED]
+        
 
 ## Objectives
 
@@ -122,12 +121,27 @@ For more detailed validation notes, see [`docs/network-validation.md`](docs/netw
 Public screenshots can document:
 
 1. VirtualBox Windows VM overview
+   <img width="1611" height="1096" alt="image" src="https://github.com/user-attachments/assets/afcdb4ec-b861-4826-a5c7-6f53712ff0d4" />
+
 2. NAT Network configuration with identifiers redacted
+   <img width="1222" height="838" alt="image" src="https://github.com/user-attachments/assets/42553038-db7c-4ccb-be4b-6f152b89868a" />
+
 3. Windows static IPv4 configuration with address fields redacted
+   <img width="1387" height="1134" alt="image" src="https://github.com/user-attachments/assets/ff27acac-1f6c-443e-a809-48ce71727117" />
+
 4. Successful Windows-to-Kali connectivity with addresses redacted
+   <img width="1350" height="1165" alt="image" src="https://github.com/user-attachments/assets/4a0f90fe-de52-44d5-a98d-96abc88e6a82" />
+
 5. Successful outbound connectivity with destination information redacted where required
+ <img width="1350" height="1165" alt="image" src="https://github.com/user-attachments/assets/cfafccb6-0d10-417e-977c-7196db5d7728" />
+
 6. Windows Defender Firewall inbound rule used for troubleshooting
+    <img width="529" height="473" alt="image" src="https://github.com/user-attachments/assets/2167e6e6-f0e9-4d84-9d45-80ca828620f3" />
+
 7. Successful Kali-to-Windows connectivity with addresses redacted
+
+   <img width="1487" height="1058" alt="image" src="https://github.com/user-attachments/assets/e66537f3-1bfa-4b08-9d55-f4cd217efb6d" />
+
 
 ## Security and Privacy Notes
 
