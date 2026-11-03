@@ -1,8 +1,8 @@
 # Windows 10 Cybersecurity Lab in VirtualBox
 
-This project documents the setup of a Windows 10 virtual machine in Oracle VirtualBox for use in a small cybersecurity practice lab alongside Kali Linux and an Android device.
+This project documents the setup of a Windows 10 virtual machine in Oracle VirtualBox for use in a small cybersecurity practice lab alongside Kali Linux.
 
-The goal is to build a controlled virtual environment, connect the lab systems through the same lab network, configure predictable private addressing, and validate communication between the systems.
+The goal is to build a controlled virtual environment, place both machines on the same isolated VirtualBox NAT Network, configure predictable private addressing, and validate communication between the Windows and Kali systems.
 
 > **Privacy note:** IP addresses and other network identifiers are intentionally redacted from this public repository.
 
@@ -13,24 +13,23 @@ The goal is to build a controlled virtual environment, connect the lab systems t
 | Hypervisor | Oracle VirtualBox |
 | Windows VM | Windows 10 64-bit |
 | Kali VM | Kali Linux |
-| Android Device | Android lab/test device |
 | Virtual Network | VirtualBox NAT Network |
-| Addressing | Private IPv4 configuration (redacted) |
+| Addressing | Static private IPv4 configuration (redacted) |
 
 ## Network Topology
 
 ```text
-                         Internet
-                            |
-                     VirtualBox NAT
-                            |
-                    Private Gateway
-                            |
-                     Lab NAT Network
-                  /         |         \
-                 /          |          \
-        Kali Linux VM  Windows 10 VM  Android Device
-        [IP REDACTED]  [IP REDACTED]   [IP REDACTED]
+                     Internet
+                        |
+                 VirtualBox NAT
+                        |
+                Private Gateway
+                        |
+                 Lab NAT Network
+                 /             \
+                /               \
+        Kali Linux VM       Windows 10 VM
+        [IP REDACTED]       [IP REDACTED]
 ```
 
 ## Objectives
@@ -38,7 +37,6 @@ The goal is to build a controlled virtual environment, connect the lab systems t
 - Create a Windows 10 virtual machine in VirtualBox.
 - Install Windows 10 from an ISO image.
 - Attach the Windows VM to the same NAT Network as Kali Linux.
-- Include the Android test device in the documented lab topology.
 - Configure a static private IPv4 address on Windows.
 - Verify Windows-to-Kali connectivity.
 - Verify outbound connectivity from Windows.
@@ -148,7 +146,7 @@ All security testing should be performed only against systems and networks you o
 - Static addressing
 - ICMP connectivity validation
 - Windows Defender Firewall troubleshooting
-- Kali Linux, Windows, and Android lab interoperability
+- Kali Linux and Windows interoperability
 - Cybersecurity lab segmentation
 - Security-conscious technical documentation
 - Information redaction and privacy awareness
