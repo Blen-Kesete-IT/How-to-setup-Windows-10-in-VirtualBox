@@ -20,7 +20,7 @@ From Windows Command Prompt, an ICMP echo test was sent to the Kali VM using its
 ping [KALI-IP-REDACTED]
 ```
 
-The validation evidence showed successful replies and **0% packet loss**, confirming communication between the two VMs.
+The validation evidence showed successful replies and **0% packet loss**, confirming Windows could reach the Kali VM.
 
 ## Test 2 — Outbound Connectivity
 
@@ -34,36 +34,72 @@ The validation evidence showed **0% packet loss**.
 
 ## Test 3 — Kali to Windows
 
-From Kali Linux, a reverse connectivity test can verify bidirectional communication:
+From Kali Linux, the reverse connectivity test was performed with:
 
 ```bash
-ping [WINDOWS-IP-REDACTED]
+ping -c 4 [WINDOWS-IP-REDACTED]
 ```
 
-## Troubleshooting
+### Initial Result
 
-If Windows can reach Kali but Kali cannot reach Windows, check Windows Defender Firewall. Inbound ICMP echo requests may be blocked even when general network connectivity is working.
+The initial Kali-to-Windows test failed:
 
-Prefer enabling the appropriate inbound rule instead of disabling the firewall entirely:
+```text
+4 packets transmitted, 0 received, 100% packet loss
+```
 
-**Windows Defender Firewall with Advanced Security > Inbound Rules > File and Printer Sharing (Echo Request - ICMPv4-In)**
+Because Windows could already communicate with Kali, this indicated that the virtual network was functioning but inbound ICMP traffic to Windows required additional investigation.
 
-Useful local troubleshooting commands include:
+## Troubleshooting Kali-to-Windows Connectivity
+
+### Problem
+
+Kali Linux could not receive ICMP Echo Replies from the Windows 10 VM. The test resulted in **100% packet loss**.
+
+### Investigation
+
+The Windows Defender Firewall configuration was reviewed. The Windows VM was connected using the **Public** network profile, and inbound ICMP Echo Requests can be blocked by the firewall even when other network connectivity works normally.
+
+### Resolution
+
+On the Windows 10 VM:
+
+1. Open **Windows Defender Firewall**.
+2. Select **Advanced settings**.
+3. Select **Inbound Rules**.
+4. Locate **File and Printer Sharing (Echo Request - ICMPv4-In)**.
+5. Enable the rule that applies to the active **Public** network profile.
+6. Keep Windows Defender Firewall enabled; only the required ICMP rule should be changed.
+7. Return to Kali Linux and repeat the connectivity test.
+
+```bash
+ping -c 4 [WINDOWS-IP-REDACTED]
+```
+
+A successful test should report received packets and **0% packet loss**.
+
+### Additional Diagnostic Commands
+
+Windows:
 
 ```cmd
 ipconfig
 route print
 ```
 
-and on Kali:
+Kali Linux:
 
 ```bash
 ip addr
 ip route
 ```
 
-Do not publish the resulting IP addresses, routes, or other identifiers unless permitted by the instructor.
+These commands can be used to verify interface addressing and routing. Their output should be redacted before being published.
+
+## Security and Privacy Note
+
+IP addresses and other network identifiers are intentionally masked in this public repository. Screenshots should also be reviewed and redacted before publication.
 
 ## Validation Result
 
-The lab evidence demonstrates successful VM-to-VM connectivity and outbound network connectivity. Specific addresses are intentionally omitted from this public repository.
+The lab demonstrates the process of testing Windows-to-Kali connectivity, outbound connectivity, and troubleshooting Kali-to-Windows ICMP communication. This troubleshooting exercise also demonstrates why host-based firewall rules must be considered when diagnosing apparent network connectivity failures.
