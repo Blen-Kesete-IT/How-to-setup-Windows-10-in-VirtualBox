@@ -2,7 +2,9 @@
 
 This project documents the setup of a Windows 10 virtual machine in Oracle VirtualBox for use in a small cybersecurity practice lab alongside Kali Linux.
 
-The goal of the lab is to build a controlled virtual environment, place both machines on the same isolated VirtualBox NAT Network, configure predictable IP addressing, and validate communication between the Windows and Kali systems.
+The goal is to build a controlled virtual environment, place both machines on the same isolated VirtualBox NAT Network, configure predictable private addressing, and validate communication between the Windows and Kali systems.
+
+> **Privacy note:** IP addresses and other network identifiers are intentionally redacted from this public repository.
 
 ## Lab Overview
 
@@ -11,11 +13,8 @@ The goal of the lab is to build a controlled virtual environment, place both mac
 | Hypervisor | Oracle VirtualBox |
 | Windows VM | Windows 10 64-bit |
 | Kali VM | Kali Linux |
-| Virtual Network | VirtualBox NAT Network (`NatNetwork`) |
-| Windows IP | `10.0.0.10/24` |
-| Kali IP | `10.0.0.2/24` |
-| Default Gateway | `10.0.0.1` |
-| DNS | `8.8.8.8` |
+| Virtual Network | VirtualBox NAT Network |
+| Addressing | Static private IPv4 configuration (redacted) |
 
 ## Network Topology
 
@@ -24,13 +23,13 @@ The goal of the lab is to build a controlled virtual environment, place both mac
                         |
                  VirtualBox NAT
                         |
-              Gateway: 10.0.0.1
+                Private Gateway
                         |
-              NatNetwork (10.0.0.0/24)
-                 /                 \
-                /                   \
-        Kali Linux VM          Windows 10 VM
-          10.0.0.2               10.0.0.10
+                 Lab NAT Network
+                 /             \
+                /               \
+        Kali Linux VM       Windows 10 VM
+        [IP REDACTED]       [IP REDACTED]
 ```
 
 ## Objectives
@@ -38,10 +37,10 @@ The goal of the lab is to build a controlled virtual environment, place both mac
 - Create a Windows 10 virtual machine in VirtualBox.
 - Install Windows 10 from an ISO image.
 - Attach the Windows VM to the same NAT Network as Kali Linux.
-- Configure a static IPv4 address on Windows.
+- Configure a static private IPv4 address on Windows.
 - Verify Windows-to-Kali connectivity.
-- Verify Internet connectivity from Windows.
-- Document the lab with screenshots and repeatable steps.
+- Verify outbound connectivity from Windows.
+- Document the lab without publishing network identifiers.
 
 ## Windows 10 VM Configuration
 
@@ -52,86 +51,57 @@ The Windows 10 VM was created with the following general settings:
 - **Virtual disk:** dynamically allocated VDI, at least 40 GB
 - **Network adapter:** Intel PRO/1000 MT Desktop
 - **Network mode:** NAT Network
-- **NAT Network name:** `NatNetwork`
 
 ## Static IPv4 Configuration
 
-Inside Windows 10, the Ethernet adapter was configured manually with:
+Inside Windows 10, the Ethernet adapter was manually configured with a private IPv4 address, subnet mask, gateway, and DNS configuration. Exact values are intentionally omitted from this public repository.
 
 ```text
-IP address:       10.0.0.10
-Subnet mask:      255.255.255.0
-Default gateway:  10.0.0.1
-Preferred DNS:    8.8.8.8
+IP address:       [REDACTED]
+Subnet mask:      [REDACTED]
+Default gateway:  [REDACTED]
+DNS:              [REDACTED]
 ```
-
-This provides the Windows VM with a predictable address for lab exercises and makes host-to-host testing easier.
 
 ## Connectivity Validation
 
-From the Windows 10 command prompt, the Kali VM was tested with:
+Connectivity was tested from Windows to the Kali VM and from the lab environment to an external destination. The tests completed successfully with **0% packet loss** in the captured validation evidence.
 
-```cmd
-ping 10.0.0.2
-```
+Exact addresses are not published. Screenshots intended for public use should have IP addresses and other network identifiers blurred or covered before upload.
 
-The test returned four successful replies with **0% packet loss**, confirming communication from Windows to Kali.
-
-Internet reachability was then tested with:
-
-```cmd
-ping 8.8.8.8
-```
-
-This also returned successful replies with **0% packet loss**, confirming that the Windows VM could reach the Internet through the VirtualBox NAT Network.
-
-The reverse connectivity test should also be performed from Kali Linux:
-
-```bash
-ping 10.0.0.10
-```
-
-If Windows does not respond to inbound ping requests, verify the Windows Defender Firewall ICMPv4 Echo Request rule rather than disabling the firewall completely.
+A reverse connectivity test from Kali to Windows can also be used to verify bidirectional communication. If Windows does not respond to inbound ICMP echo requests, verify the Windows Defender Firewall ICMPv4 Echo Request rule rather than disabling the firewall completely.
 
 ## Evidence
 
-Screenshots from the completed lab should be stored in the `screenshots/` directory and can include:
+Public screenshots can document:
 
 1. VirtualBox Windows VM overview
-2. Windows NAT Network configuration
-3. Windows static IPv4 settings
-4. Windows-to-Kali successful ping
-5. Windows Internet connectivity test
-6. Kali-to-Windows successful ping
+2. NAT Network configuration with identifiers redacted
+3. Windows static IPv4 configuration with address fields redacted
+4. Successful Windows-to-Kali connectivity with addresses redacted
+5. Successful outbound connectivity with destination information redacted where required
+6. Successful Kali-to-Windows connectivity with addresses redacted
 
-Suggested filenames:
+## Security and Privacy Notes
 
-```text
-screenshots/
-├── 01-virtualbox-windows10-vm.png
-├── 02-nat-network-settings.png
-├── 03-windows-static-ip.png
-├── 04-windows-ping-kali.png
-└── 05-kali-ping-windows.png
-```
+This environment is intended for authorized lab and educational use only. Network identifiers are intentionally excluded from the public documentation in accordance with lab privacy requirements.
 
-## Security Notes
+Before publishing screenshots, review the entire image for IP addresses, usernames, hostnames, MAC addresses, email addresses, tokens, keys, or other information that should not be public.
 
-This environment is intended for authorized lab and educational use only. Keeping the systems inside a VirtualBox NAT Network reduces direct exposure to the physical LAN while still allowing the VMs to communicate with each other and reach the Internet when required.
-
-A NAT Network is useful for a cybersecurity lab because it provides a repeatable internal subnet while maintaining separation from production systems. Before performing security testing, verify that all targets are systems you own or are explicitly authorized to test.
+All security testing should be performed only against systems and networks you own or have explicit authorization to assess.
 
 ## Skills Demonstrated
 
 - Virtual machine deployment
 - Windows installation and configuration
 - VirtualBox networking
-- IPv4 subnet configuration
-- Static IP addressing
-- ICMP troubleshooting
+- IPv4 configuration
+- Static addressing
+- ICMP connectivity validation
 - Kali Linux and Windows interoperability
-- Basic cybersecurity lab segmentation
-- Technical documentation
+- Cybersecurity lab segmentation
+- Security-conscious technical documentation
+- Information redaction and privacy awareness
 
 ## Repository Structure
 
@@ -152,4 +122,4 @@ Cybersecurity lab and hands-on IT practice
 
 ---
 
-> This repository documents a personal training environment. All testing should be performed only on systems and networks you own or have explicit permission to assess.
+> This repository documents a personal training environment. Sensitive network configuration details are intentionally redacted.
