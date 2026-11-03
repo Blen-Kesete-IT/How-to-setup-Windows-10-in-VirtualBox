@@ -40,6 +40,7 @@ The goal is to build a controlled virtual environment, place both machines on th
 - Configure a static private IPv4 address on Windows.
 - Verify Windows-to-Kali connectivity.
 - Verify outbound connectivity from Windows.
+- Verify Kali-to-Windows connectivity.
 - Document the lab without publishing network identifiers.
 
 ## Windows 10 VM Configuration
@@ -69,7 +70,52 @@ Connectivity was tested from Windows to the Kali VM and from the lab environment
 
 Exact addresses are not published. Screenshots intended for public use should have IP addresses and other network identifiers blurred or covered before upload.
 
-A reverse connectivity test from Kali to Windows can also be used to verify bidirectional communication. If Windows does not respond to inbound ICMP echo requests, verify the Windows Defender Firewall ICMPv4 Echo Request rule rather than disabling the firewall completely.
+## Troubleshooting: Kali Could Not Ping Windows
+
+During the reverse connectivity test, Kali Linux was initially unable to ping the Windows 10 VM.
+
+The first test showed:
+
+```text
+4 packets transmitted, 0 received, 100% packet loss
+```
+
+Because Windows could already communicate with Kali, I investigated the Windows host firewall rather than changing the VirtualBox NAT Network.
+
+### Extra Steps I Took
+
+On the Windows 10 VM, I opened **Windows Defender Firewall with Advanced Security** and completed these steps:
+
+1. Selected **Inbound Rules**.
+2. Located **File and Printer Sharing (Echo Request - ICMPv4-In)**.
+3. Identified the rule associated with the **Private** profile.
+4. Right-clicked the rule and selected **Enable Rule**.
+5. Kept Windows Defender Firewall enabled instead of disabling it completely.
+6. Returned to Kali Linux and repeated the ping test using the Windows VM's private lab address.
+
+The public command is shown with the address redacted:
+
+```bash
+ping -c 4 [WINDOWS-IP-REDACTED]
+```
+
+### Result
+
+After enabling the appropriate ICMPv4 inbound rule, the Kali-to-Windows connectivity test succeeded:
+
+```text
+4 packets transmitted, 4 received, 0% packet loss
+```
+
+This confirmed that the VirtualBox network was working and that the failed reverse ping was caused by Windows Defender Firewall blocking inbound ICMP Echo Requests.
+
+### What I Learned
+
+This troubleshooting step demonstrated that successful connectivity in one direction does not guarantee that return traffic will be permitted in the opposite direction. Host-based firewall rules can affect ICMP testing even when two systems are correctly configured on the same virtual network.
+
+It also reinforced the better security practice of enabling only the required firewall rule instead of disabling the firewall entirely.
+
+For more detailed validation notes, see [`docs/network-validation.md`](docs/network-validation.md).
 
 ## Evidence
 
@@ -80,7 +126,8 @@ Public screenshots can document:
 3. Windows static IPv4 configuration with address fields redacted
 4. Successful Windows-to-Kali connectivity with addresses redacted
 5. Successful outbound connectivity with destination information redacted where required
-6. Successful Kali-to-Windows connectivity with addresses redacted
+6. Windows Defender Firewall inbound rule used for troubleshooting
+7. Successful Kali-to-Windows connectivity with addresses redacted
 
 ## Security and Privacy Notes
 
@@ -98,6 +145,7 @@ All security testing should be performed only against systems and networks you o
 - IPv4 configuration
 - Static addressing
 - ICMP connectivity validation
+- Windows Defender Firewall troubleshooting
 - Kali Linux and Windows interoperability
 - Cybersecurity lab segmentation
 - Security-conscious technical documentation
