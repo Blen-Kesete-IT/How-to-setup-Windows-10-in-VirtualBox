@@ -1,5 +1,7 @@
 # Lab Setup Guide
 
+> **Privacy:** Exact IP addresses, gateway values, DNS addresses, and other network identifiers are intentionally redacted from this public documentation.
+
 ## 1. Create the Windows 10 Virtual Machine
 
 In Oracle VirtualBox, create a new VM with:
@@ -12,74 +14,41 @@ In Oracle VirtualBox, create a new VM with:
 
 ## 2. Attach the Windows ISO
 
-Open the VM settings and go to **Storage**. Select the empty optical drive and attach the Windows 10 ISO.
-
-Start the VM and complete the Windows installation:
-
-1. Select language and keyboard options.
-2. Choose **Install Now**.
-3. Skip the product key if appropriate for the lab.
-4. Choose **Custom: Install Windows only**.
-5. Select the virtual disk.
-6. Complete installation and initial Windows setup.
+Open the VM settings and go to **Storage**. Select the empty optical drive and attach the Windows 10 ISO. Start the VM and complete the Windows installation.
 
 ## 3. Configure VirtualBox Networking
 
-Power off the Windows VM before changing its virtual network settings.
-
-Go to:
-
-**Settings > Network > Adapter 1**
-
-Configure:
+Power off the Windows VM before changing its virtual network settings. Go to **Settings > Network > Adapter 1** and configure the adapter to use the same private **NAT Network** as the Kali VM.
 
 ```text
 Enable Network Adapter: Yes
 Attached to:            NAT Network
-Name:                   NatNetwork
+Network name:           [REDACTED]
 Virtual Cable:          Connected
 ```
 
-The Windows and Kali VMs must be attached to the **same NAT Network** for direct communication.
+## 4. Configure Static IPv4 in Windows
 
-## 4. Configure a Static IPv4 Address in Windows
+Open **Control Panel > Network and Sharing Center > Change adapter settings**, open the Ethernet adapter properties, and select **Internet Protocol Version 4 (TCP/IPv4)**.
 
-Open:
-
-**Control Panel > Network and Sharing Center > Change adapter settings**
-
-Then:
-
-1. Right-click the Ethernet adapter.
-2. Select **Properties**.
-3. Select **Internet Protocol Version 4 (TCP/IPv4)**.
-4. Click **Properties**.
-5. Choose **Use the following IP address**.
-
-Use:
+The lab used a manually assigned private IPv4 configuration. The exact values are intentionally not published:
 
 ```text
-IP address:       10.0.0.10
-Subnet mask:      255.255.255.0
-Default gateway:  10.0.0.1
-Preferred DNS:    8.8.8.8
+IP address:       [REDACTED]
+Subnet mask:      [REDACTED]
+Default gateway:  [REDACTED]
+DNS:              [REDACTED]
 ```
 
-## 5. Verify the Kali Address
+## 5. Verify the Kali Interface
 
-On Kali Linux, verify that its lab interface is configured as expected:
+On Kali Linux, verify its lab interface:
 
 ```bash
 ip addr
 ```
 
-For this lab, Kali is expected to use:
-
-```text
-10.0.0.2/24
-```
-
-If the address is different, update the test commands or network configuration so both machines are on the same subnet.
+Confirm that Kali and Windows are connected to the intended lab network. Do not publish the resulting network identifiers in public screenshots or documentation.
 
 ## 6. Confirm Windows Configuration
 
@@ -89,10 +58,10 @@ Open Command Prompt and run:
 ipconfig
 ```
 
-Confirm that the Ethernet adapter shows the intended address, subnet mask, and gateway.
+Confirm that the Ethernet adapter shows the intended private configuration. Redact address information before publishing output.
 
 ## 7. Lab Design Considerations
 
-A VirtualBox NAT Network is preferable to standard per-VM NAT when two VMs must communicate with each other. It provides a shared private virtual subnet while still allowing outbound access through NAT.
+A VirtualBox NAT Network provides a shared private virtual network for the lab VMs while supporting controlled outbound connectivity.
 
-For a cybersecurity practice environment, keep offensive testing limited to systems you own or have explicit permission to assess. Avoid bridging an intentionally vulnerable lab machine directly onto a production or household LAN unless that exposure is specifically required and understood.
+For a cybersecurity practice environment, keep testing limited to systems you own or have explicit permission to assess. Before publishing documentation, redact IP addresses, MAC addresses, usernames, hostnames, and other identifiers as required by the course or organization.
